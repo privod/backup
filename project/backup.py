@@ -1,13 +1,29 @@
 import subprocess
 
-from project.conf import Conf
+from config import Conf
 
 
-_path = 'F:\\Games\\OpenXcom\\user\\xcom1'
-_archiver = "C:\\Program Files\\7-Zip\\7z.exe"
-_arc_name = 'xcom'
+class BackupConf(Conf):
+    file_name = 'backup.cfg'
+    default = [
+        (None, 'path',     '.',                                'Путь'),
+        (None, 'archiver', 'C:\\Program Files\\7-Zip\\7z.exe', 'Путь к архиватору'),
+        (None, 'arc_name', 'name',                             'Имя файла архива'),
+    ]
+    # path = '.'          # 'F:\\Games\\OpenXcom\\user\\xcom1'
+    # archiver = "C:\\Program Files\\7-Zip\\7z.exe"
+    # arc_name = 'name'   # 'xcom'
 
 
 def backup():
-    if subprocess.call([_archiver, 'a', _arc_name, _path], shell=True) == 0:
+
+    conf = BackupConf()
+    if conf.file_created:
+        print('Создан новый конфигурационный файл.')
+        return
+    archiver = conf.get('archiver')
+    arc_name = conf.get('arc_name')
+    path = conf.get('path')
+
+    if subprocess.call([archiver, 'a', arc_name, path], shell=True) == 0:
         print('Архивирование успешно завершено.')
