@@ -7,7 +7,7 @@ call :delete build
 call :delete dist
 
 echo delete virtualenv "env" ...
-python35 -m venv env
+python3 -m venv env
 if %errorlevel% neq 0 goto error
 
 call env\Scripts\activate
