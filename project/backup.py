@@ -1,5 +1,9 @@
 import subprocess
 
+import os.path
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
+
 from config import Conf
 
 
@@ -25,5 +29,20 @@ def backup():
     arc_name = conf.get('arc_name')
     path = conf.get('path')
 
-    if subprocess.call([archiver, 'a', arc_name, path], shell=True) == 0:
-        print('Архивирование успешно завершено.')
+    if subprocess.call([archiver, 'a', arc_name, path], shell=True) != 0:
+        print('Ошибка Архивирования!')
+        return
+
+    arc_filename = '.'.join([arc_name, '7z'])
+    gauth = GoogleAuth()
+    gauth.LocalWebserverAuth()
+
+    drive = GoogleDrive(gauth)
+
+    file1 = drive.CreateFile({
+        'id': '0B4TgAHk1RvhXS1BIV3JYYkxxamc',
+        'parents': [{'id': '0B4TgAHk1RvhXS2FTd3JzUUJkSDg'}]
+    })
+    file1.SetContentFile(arc_filename)
+    file1.Upload() # Files.insert()
+
