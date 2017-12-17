@@ -21,7 +21,7 @@ class BackupConf(Conf):
     # arc_name = 'name'   # 'xcom'
 
 
-def backup():
+def upload():
 
     conf = BackupConf()
     if conf.file_created:
@@ -44,12 +44,14 @@ def backup():
     gd_id = conf.get('gd_id')
     gd_parent_id = conf.get('gd_parent_id')
     metadata = {}
-    if gd_id is not None: metadata['id'] = gd_id
-    if gd_parent_id is not None: metadata['parents'] = [{'id': gd_parent_id}]
-    # file1 = drive.CreateFile({
-    #     'id': '0B4TgAHk1RvhXS1BIV3JYYkxxamc',
-    #     'parents': [{'id': '0B4TgAHk1RvhXS2FTd3JzUUJkSDg'}]
-    # })
+    if gd_id != '':
+        metadata['id'] = gd_id
+    if gd_parent_id != '':
+        metadata['parents'] = [{'id': gd_parent_id}]
     file1 = drive.CreateFile(metadata)
     file1.SetContentFile(arc_filename)
     file1.Upload()
+
+
+if __name__ == "__main__":
+    upload()

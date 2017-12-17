@@ -15,7 +15,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'backup = project.main:backup',
+            'upload = project.backup:upload',
         ]
     },
     # include_package_data=True,
