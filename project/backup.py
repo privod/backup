@@ -10,9 +10,11 @@ from config import Conf
 class BackupConf(Conf):
     file_name = 'backup.cfg'
     default = [
-        (None, 'path',     '.',                                'Путь'),
+        (None, 'path',     '.',                                'Путь к файлу/каталогу для архивирования'),
         (None, 'archiver', 'C:\\Program Files\\7-Zip\\7z.exe', 'Путь к архиватору'),
         (None, 'arc_name', 'name',                             'Имя файла архива'),
+        (None, 'gd_id', '', 'id архива в GDrive'),
+        (None, 'gd_parent_id', '', 'id родительского каталога в GDrive'),
     ]
     # path = '.'          # 'F:\\Games\\OpenXcom\\user\\xcom1'
     # archiver = "C:\\Program Files\\7-Zip\\7z.exe"
@@ -39,10 +41,15 @@ def backup():
 
     drive = GoogleDrive(gauth)
 
-    file1 = drive.CreateFile({
-        'id': '0B4TgAHk1RvhXS1BIV3JYYkxxamc',
-        'parents': [{'id': '0B4TgAHk1RvhXS2FTd3JzUUJkSDg'}]
-    })
+    gd_id = conf.get('gd_id')
+    gd_parent_id = conf.get('gd_parent_id')
+    metadata = {}
+    if gd_id is not None: metadata['id'] = gd_id
+    if gd_parent_id is not None: metadata['parents'] = [{'id': gd_parent_id}]
+    # file1 = drive.CreateFile({
+    #     'id': '0B4TgAHk1RvhXS1BIV3JYYkxxamc',
+    #     'parents': [{'id': '0B4TgAHk1RvhXS2FTd3JzUUJkSDg'}]
+    # })
+    file1 = drive.CreateFile(metadata)
     file1.SetContentFile(arc_filename)
-    file1.Upload() # Files.insert()
-
+    file1.Upload()

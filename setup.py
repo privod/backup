@@ -13,11 +13,11 @@ setup(
         'PyDrive'
         'config'        # Устанавливается локально (./lib/config-1.0.tar.gz) смотри ./cmd/install.cmd
     ],
-    # entry_points={
-        # 'console_scripts': [
-            # 'actual_ncr = project.main:start',
-        # ]
-    # },
+    entry_points={
+        'console_scripts': [
+            'backup = project.main:backup',
+        ]
+    },
     # include_package_data=True,
     # test_suite='tests',
 )
