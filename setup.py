@@ -11,7 +11,6 @@ setup(
 
     install_requires=[
         'PyDrive',
-        'config'        # Устанавливается локально (./lib/config-1.0.tar.gz) смотри ./cmd/install.cmd
     ],
     entry_points={
         'console_scripts': [
