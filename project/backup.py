@@ -1,9 +1,10 @@
 import subprocess
 
 import os.path
+
+import argparse
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
-
 from config import Conf
 
 
@@ -20,16 +21,41 @@ class BackupConf(Conf):
     # archiver = "C:\\Program Files\\7-Zip\\7z.exe"
     # arc_name = 'name'   # 'xcom'
 
-
-def upload():
-
+def main_old():
     conf = BackupConf()
     if conf.file_created:
         print('Создан новый конфигурационный файл.')
         return
-    archiver = conf.get('archiver')
-    arc_name = conf.get('arc_name')
-    path = conf.get('path')
+
+    upload(
+        archiver=conf.get('archiver'),
+        arc_name=conf.get('arc_name'),
+        path=conf.get('path'),
+        gd_id=conf.get('gd_id'),
+        gd_parent_id=conf.get('gd_parent_id')
+    )
+
+
+def main():
+  parser = argparse.ArgumentParser(description='Архивирует указанную папку и загружает в Google Drive')
+  parser.add_argument('-a', '--archiver',       help='Путь к архиватору 7z')
+  parser.add_argument('-n', '--arc-name',        help='Имя файла архива')
+  parser.add_argument('-p', '--path',           help='Путь к файлу/каталогу для архивирования')
+  parser.add_argument('-gd', '--gdrive-dir',    help='id архива в Google Drive')
+  parser.add_argument('-gp', '--gdrive-parent', help='id родительского каталога в Google Drive')
+
+  args = parser.parse_args()
+
+  upload(
+      args.archiver,
+      args.arc_name,
+      args.path,
+      args.gdrive_dir,
+      args.gdrive_parent
+  )
+
+
+def upload(archiver, arc_name, path, gd_id, gd_parent_id):
 
     if subprocess.call([archiver, 'a', arc_name, path], shell=True) != 0:
         print('Ошибка Архивирования!')
@@ -41,8 +67,6 @@ def upload():
 
     drive = GoogleDrive(gauth)
 
-    gd_id = conf.get('gd_id')
-    gd_parent_id = conf.get('gd_parent_id')
     metadata = {}
     if gd_id != '':
         metadata['id'] = gd_id
@@ -54,4 +78,4 @@ def upload():
 
 
 if __name__ == "__main__":
-    upload()
+    main()
