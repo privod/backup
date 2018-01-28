@@ -1,6 +1,6 @@
 import subprocess
 
-import os.path
+import os
 
 import argparse
 from pydrive.auth import GoogleAuth
@@ -14,25 +14,25 @@ def main():
     parser.add_argument('-p', '--path',           help='Путь к файлу/каталогу для архивирования')
     parser.add_argument('-gd', '--gdrive-dir',    help='id архива в Google Drive')
     parser.add_argument('-gp', '--gdrive-parent', help='id родительского каталога в Google Drive')
-
     args = parser.parse_args()
 
-    upload(
-        args.archiver,
-        args.arc_name,
-        args.path,
-        args.gdrive_dir,
-        args.gdrive_parent,
-    )
-
-
-def upload(archiver, arc_name, path, gd_id, gd_parent_id):
-
-    if subprocess.call([archiver, 'a', arc_name, path], shell=True) != 0:
+    if subprocess.call([args.archiver, 'a', args.arc_name, args.path], shell=True) != 0:
         print('Ошибка Архивирования!')
         return
 
-    arc_filename = '.'.join([arc_name, '7z'])
+    arc_filename = '.'.join([args.arc_name, '7z'])
+    try:
+        upload(
+            arc_filename,
+            args.gdrive_dir,
+            args.gdrive_parent,
+        )
+    finally:
+        os.remove(arc_filename)
+
+
+def upload(arc_filename, gd_id, gd_parent_id):
+
     gauth = GoogleAuth()
     gauth.LocalWebserverAuth()
 
